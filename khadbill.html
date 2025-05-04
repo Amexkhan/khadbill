@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json" />
+<link rel="manifest" href="manifest.json">
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AFSAR AGRO</title>
@@ -318,90 +318,100 @@ button:hover {
     document.getElementById("status").innerText = status;
   }
 
-function saveAndPrint() {
-const customerName = document.getElementById("customerName").value;
-const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
-const totalAmount = parseFloat(document.getElementById("totalAmount").innerText);
-const remaining = Math.max(0, totalAmount - paidAmount);
-const status = remaining === 0 ? "Paid" : "Unpaid";
-const billMark = document.getElementById("billMark").checked; // ✅ checkbox value (true/false)
+  function saveAndPrint() {
+  const customerName = document.getElementById("customerName").value;
+  const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
+  const totalAmount = parseFloat(document.getElementById("totalAmount").innerText);
+  const remaining = Math.max(0, totalAmount - paidAmount);
+  const status = remaining === 0 ? "Paid" : "Unpaid";
+  const billMark = document.getElementById("billMark").checked; // ✅ checkbox value (true/false)
 
-if (!customerName || items.length === 0) {
-return alert("Fill customer name & add items.");
-}
+  if (!customerName || items.length === 0) {
+    return alert("Fill customer name & add items.");
+  }
 
-const billNo = parseInt(document.getElementById("billNo").value);
-const totalItems = items.length;
+  const billNo = parseInt(document.getElementById("billNo").value);
+  const totalItems = items.length;
 const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
 
-const bill = {
-customer: customerName,
-billNo: billNo,
-date: document.getElementById("billDate").value,
-items: items,
-total: totalAmount.toFixed(2),
-paid: paidAmount.toFixed(2),
-remaining: remaining.toFixed(2),
-status: status,
-mark: billMark,
-totalItems: totalItems,
-totalQty: totalQty
+  const bill = {
+  customer: customerName,
+  billNo: billNo,
+  date: document.getElementById("billDate").value,
+  items: items,
+  total: totalAmount.toFixed(2),
+  paid: paidAmount.toFixed(2),
+  remaining: remaining.toFixed(2),
+  status: status,
+  mark: billMark,
+  totalItems: totalItems,
+  totalQty: totalQty
 };
 
-localStorage.setItem(`bill_${billNo}`, JSON.stringify(bill));
+  localStorage.setItem(`bill_${billNo}`, JSON.stringify(bill));
 
-if (!isEditing) {
-localStorage.setItem("lastBillNo", billNo);
-billCounter = billNo + 1;
-}
+  if (!isEditing) {
+    localStorage.setItem("lastBillNo", billNo);
+    billCounter = billNo + 1;
+  }
 
-// ✅ Set print content
-document.getElementById("pCustomer").innerText = customerName;
-document.getElementById("pBillNo").innerText = billNo;
-document.getElementById("pDate").innerText = bill.date;
-document.getElementById("pTotal").innerText = bill.total;
-document.getElementById("pPaid").innerText = bill.paid;
-document.getElementById("pRemain").innerText = bill.remaining;
-document.getElementById("pStatus").innerText = bill.status;
-document.getElementById("pMark").innerText = billMark ? "Duplicate" : ""; // ✅ show if checked
-document.getElementById("pTotalItems").innerText = bill.totalItems;
-document.getElementById("pTotalQty").innerText = bill.totalQty;
+  // ✅ Set print content
+  document.getElementById("pCustomer").innerText = customerName;
+  document.getElementById("pBillNo").innerText = billNo;
+  document.getElementById("pDate").innerText = bill.date;
+  document.getElementById("pTotal").innerText = bill.total;
+  document.getElementById("pPaid").innerText = bill.paid;
+  document.getElementById("pRemain").innerText = bill.remaining;
+  document.getElementById("pStatus").innerText = bill.status;
+  document.getElementById("pMark").innerText = billMark ? "Duplicate" : ""; // ✅ show if checked
+  document.getElementById("pTotalItems").innerText = bill.totalItems;
+  document.getElementById("pTotalQty").innerText = bill.totalQty;
 
-const tbody = document.getElementById("pItems");
-tbody.innerHTML = "";
-items.forEach(item => {
-tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.amount.toFixed(2)}</td></tr>`;
-});
+  const tbody = document.getElementById("pItems");
+  tbody.innerHTML = "";
+  items.forEach(item => {
+    tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.amount.toFixed(2)}</td></tr>`;
+  });
 
-const printContents = document.getElementById("printArea").innerHTML;
-const win = window\.open("", "", "height=600,width=800");
-win.document.write(`     <html>       <head>         <title>Print Bill</title>         <style>
+  const printContents = document.getElementById("printArea").innerHTML;
+  const win = window.open("", "", "height=600,width=800");
+  win.document.write(`
+    <html>
+      <head>
+        <title>Print Bill</title>
+        <style>
           @media print {
             html, body { height: 190mm; margin: 0; overflow: hidden; font-family: sans-serif; }
             table { border-collapse: collapse; width: 100%; }
             th, td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 14px; }
-          }         </style>       </head>       <body>
-        ${printContents}       </body>     </html>
+          }
+        </style>
+      </head>
+      <body>
+        ${printContents}
+      </body>
+    </html>
   `);
-win.document.close();
-win.focus();
-win.print();
-win.close();
+  win.document.close();
+  win.focus();
+  win.print();
+  win.close();
 
-// ✅ Reset form
-isEditing = false;
-items = \[];
-document.getElementById("customerName").value = "";
-document.getElementById("paidAmount").value = "";
-document.getElementById("remaining").innerText = "0";
-document.getElementById("status").innerText = "Unpaid";
-document.getElementById("billMark").checked = false; // ✅ uncheck after print
-document.getElementById("billNo").value = billCounter;
-document.getElementById("billDate").value = new Date().toLocaleDateString();
-document.getElementById("pTotalItems").innerText = "";
-document.getElementById("pTotalQty").innerText = "";
-updateTable();
+  // ✅ Reset form
+  isEditing = false;
+  items = [];
+  document.getElementById("customerName").value = "";
+  document.getElementById("paidAmount").value = "";
+  document.getElementById("remaining").innerText = "0";
+  document.getElementById("status").innerText = "Unpaid";
+  document.getElementById("billMark").checked = false; // ✅ uncheck after print
+  document.getElementById("billNo").value = billCounter;
+  document.getElementById("billDate").value = new Date().toLocaleDateString();
+  document.getElementById("pTotalItems").innerText = "";
+  document.getElementById("pTotalQty").innerText = "";
+  updateTable();
 }
+
   function loadBill() {
   const input = document.getElementById("searchInput").value.trim();
   if (!input) return alert("Please enter a bill number or customer name.");
@@ -761,7 +771,7 @@ updateTable();
                 alert("Incorrect password.");
             }
         });
-  
+        
   function downloadXML() {
   const from = new Date(document.getElementById("fromDate").value);
   const to = new Date(document.getElementById("toDate").value);
