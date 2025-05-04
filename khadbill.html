@@ -318,7 +318,7 @@ button:hover {
     document.getElementById("status").innerText = status;
   }
 
-  function saveAndPrint() {
+function saveAndPrint() {
   const customerName = document.getElementById("customerName").value;
   const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
   const totalAmount = parseFloat(document.getElementById("totalAmount").innerText);
@@ -355,7 +355,7 @@ button:hover {
     billCounter = billNo + 1;
   }
 
-  // Set print content
+  // ✅ Set print content
   document.getElementById("pCustomer").innerText = customerName;
   document.getElementById("pBillNo").innerText = billNo;
   document.getElementById("pDate").innerText = bill.date;
@@ -368,34 +368,38 @@ button:hover {
   document.getElementById("pTotalQty").innerText = bill.totalQty;
 
   const tbody = document.getElementById("pItems");
-  tbody.innerHTML = "";
-  items.forEach(item => {
-    tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.amount.toFixed(2)}</td></tr>`;
-  });
+  tbody.innerHTML = items.map(item =>
+    `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.amount.toFixed(2)}</td></tr>`
+  ).join("");
 
-  // ✅ Use in-page print — works in WebView
-  const printArea = document.getElementById("printArea").innerHTML;
-  const originalContent = document.body.innerHTML;
+  // ✅ Mobile-compatible print in new window
+  const printContents = document.getElementById("printArea").innerHTML;
+  const win = window.open("", "_blank", "height=600,width=800");
 
-  // Apply custom print styles
-  const style = `
-    <style>
-      @media print {
-        html, body { height: 190mm; margin: 0; overflow: hidden; font-family: sans-serif; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 14px; }
-      }
-    </style>
-  `;
+  win.document.write(`
+    <html>
+      <head>
+        <title>Print Bill</title>
+        <style>
+          @media print {
+            html, body { height: 190mm; margin: 0; overflow: hidden; font-family: sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 14px; }
+          }
+        </style>
+      </head>
+      <body>${printContents}</body>
+    </html>
+  `);
+  win.document.close();
+  win.focus();
 
-  document.body.innerHTML = style + printArea;
+  setTimeout(() => {
+    win.print();
+    win.close();
+  }, 500); // ⏱ adjust delay if needed
 
-  window.print();
-
-  document.body.innerHTML = originalContent;
-  location.reload(); // Optional: Refresh to reset page after print
-
-  // Reset form
+  // ✅ Reset form
   isEditing = false;
   items = [];
   document.getElementById("customerName").value = "";
@@ -407,6 +411,7 @@ button:hover {
   document.getElementById("billDate").value = new Date().toLocaleDateString();
   document.getElementById("pTotalItems").innerText = "";
   document.getElementById("pTotalQty").innerText = "";
+
   updateTable();
 }
   function loadBill() {
