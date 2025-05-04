@@ -161,6 +161,20 @@ button {
 button:hover {
   background-color: #45a049; /* Slightly darker green on hover */
 }
+      @media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-section, #print-section * {
+    visibility: visible;
+  }
+  #print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -849,6 +863,23 @@ updateTable();
   } else {
     console.log('Service Worker is not supported in this browser.');
   }
+
+  function prepareForPrint() {
+  // Hide interactive elements
+  document.querySelectorAll("input, button").forEach(el => el.style.display = 'none');
+
+  // Show a static preview version if you have one
+  document.getElementById("print-preview").style.display = 'block';
+
+  window.print();
+
+  // Restore after print
+  setTimeout(() => {
+    document.querySelectorAll("input, button").forEach(el => el.style.display = '');
+    document.getElementById("print-preview").style.display = 'none';
+  }, 1000);
+}
+
 </script>
 
 <div style="text-align:right;">
