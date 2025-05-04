@@ -839,11 +839,10 @@ updateTable();
   if ('serviceWorker' in navigator) {
     // Register the service worker
     navigator.serviceWorker.register('/khadbill/service-worker.js')
-      .then(function(registration) {
-        // Successfully registered
-        console.log('✅ Service Worker Registered: ', registration);
-      })
-      .catch(function(error) {
+  .then(function(registration) {
+    console.log('✅ Service Worker Registered: ', registration);
+  })
+   .catch(function(error) {
         // Registration failed
         console.log('❌ Service Worker Registration Failed: ', error);
       });
