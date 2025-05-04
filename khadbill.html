@@ -161,20 +161,6 @@ button {
 button:hover {
   background-color: #45a049; /* Slightly darker green on hover */
 }
-      @media print {
-  body * {
-    visibility: hidden;
-  }
-  #print-section, #print-section * {
-    visibility: visible;
-  }
-  #print-section {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-}
-
   </style>
 </head>
 <body>
@@ -864,22 +850,35 @@ updateTable();
     console.log('Service Worker is not supported in this browser.');
   }
 
-  function prepareForPrint() {
-  // Hide interactive elements
-  document.querySelectorAll("input, button").forEach(el => el.style.display = 'none');
-
-  // Show a static preview version if you have one
-  document.getElementById("print-preview").style.display = 'block';
-
-  window.print();
-
-  // Restore after print
-  setTimeout(() => {
-    document.querySelectorAll("input, button").forEach(el => el.style.display = '');
-    document.getElementById("print-preview").style.display = 'none';
-  }, 1000);
+  function isMobileDevice() {
+  return /Mobi|Android/i.test(navigator.userAgent);
 }
 
+function printBill() {
+  const printContents = document.getElementById('bill-section').innerHTML;
+  const popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+
+  popupWin.document.open();
+  popupWin.document.write(`
+    <html>
+      <head>
+        <title>Bill</title>
+        <style>
+          @media print {
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+          }
+        </style>
+      </head>
+      <body onload="setTimeout(function() { window.print(); }, 500)">
+        ${printContents}
+      </body>
+    </html>
+  `);
+  popupWin.document.close();
+}
 </script>
 
 <div style="text-align:right;">
